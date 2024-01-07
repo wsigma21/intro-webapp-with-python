@@ -10,10 +10,7 @@ from threading import Thread
 from typing import Tuple, Optional
 
 class WorkerThread(Thread):
-    """
-    Webサーバを表すクラス
-    """
-
+    
     # 実行ファイルのあるディレクトリの指定
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     # 静的配信するファイルを置くディレクトリ
@@ -213,7 +210,7 @@ class WorkerThread(Thread):
         if content_type is None:
             # pathから拡張子を取得
             if "." in path:
-                ext = path.rsplit(".", maxsplit = 1)[-1]
+                ext = path.rsplit(".", maxsplit=1)[-1]
             else:
                 ext = ""
             # 拡張子からMIME Typeを取得
