@@ -18,12 +18,20 @@ class WorkerThread(Thread):
     # 静的配信するファイルを置くディレクトリ
     STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
+    # 拡張子とMIME Typeの対応
     MIME_TYPES = {
         "html": "text/html; charset=UTF-8",
         "css": "text/css",
         "png": "image/png",
         "jpg": "image/jpg",
         "gif": "image/gif",
+    }
+
+    # pathとview関数の対応
+    URL_VIEW = {
+        "/now": views.now,
+        "/show_request": views.show_request,
+        "/parameters": views.parameters,
     }
     
     def __init__(self, client_socket: socket, address: Tuple[str, int]):
@@ -55,19 +63,12 @@ class WorkerThread(Thread):
             response_body: bytes
             content_type: Optional[str]
             response_line: str
-            # pathが/nowの時は、現在時刻を表示するHTMLを生成する
-            if path == "/now":
-                response_body, content_type, response_line = views.now()
-
-            # pathが/show_requestのときは、HTTPリクエストの内容を表示するHTMLを生成する
-            elif path == "/show_request":
-                response_body, content_type, response_line = views.show_request(
-                    method, path, http_version, request_header, request_body
-                )
             
-            elif path == "/parameters":
-                response_body, content_type, response_line = views.parameters(
-                    method, request_body
+            # pathに対応するview関数があれば、関数を取得して呼び出し、レスポンスを生成する
+            if path in self.URL_VIEW:
+                view = self.URL_VIEW[path]
+                response_body, content_type, response_line = view(
+                    method, path, http_version, request_header, request_body
                 )
                 
             # pathがそれ以外の時は、静的ファイルからレスポンスを生成する

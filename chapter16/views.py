@@ -4,7 +4,13 @@ from datetime import datetime
 from typing import Tuple, Optional
 from pprint import pformat
 
-def now() -> Tuple[bytes, Optional[str], str]:
+def now(
+    method: str,
+    path: str,
+    http_version: str,
+    request_header: dict,
+    request_body: bytes,
+) -> Tuple[bytes, Optional[str], str]:
     """
     現在時刻を表示するHTMLを生成する
     """
@@ -61,6 +67,9 @@ def show_request(
 
 def parameters(
     method: str,
+    path: str,
+    http_version: str,
+    request_header: dict,
     request_body: bytes,
 ) -> Tuple[bytes, Optional[str], str]:
     """
