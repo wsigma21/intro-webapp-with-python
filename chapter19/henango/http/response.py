@@ -7,7 +7,7 @@ class HTTPResponse:
 
     def __init__(
         self,
-        status_code: int,
+        status_code: int = 200,
         content_type: str = None,
         body: bytes = b""
     ):
