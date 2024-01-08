@@ -42,7 +42,3 @@ class WebServer:
         server_socket.bind(("localhost", 8080))
         server_socket.listen(10)
         return server_socket
-
-if __name__ == '__main__':
-    server = WebServer()
-    server.serve()
