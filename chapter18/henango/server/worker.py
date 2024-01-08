@@ -3,14 +3,13 @@ import re
 import socket
 import traceback
 from datetime import datetime
-from re import Match
 from threading import Thread
-from typing import Tuple, Optional
+from typing import Tuple
 
 import settings
 from henango.http.request import HTTPRequest
 from henango.http.response import HTTPResponse
-from urls import url_patterns
+from henango.urls.resolver import URLResolver
 
 class Worker(Thread):
 
@@ -55,15 +54,12 @@ class Worker(Thread):
             # HTTPリクエストをパースする
             request = self.parse_http_request(request_bytes)
 
-            # pathにマッチするurl_patternを探し、見つかればviewからレスポンスを生成する
-            for url_pattern in url_patterns:
-                match = url_pattern.match(request.path)
-                if match:
-                    request.params.update(match.groupdict())
-                    view = url_pattern.view
-                    response = view(request)
-                    break
+            # URL解決を試みる
+            view = URLResolver().resolve(request)
 
+            if view:
+                # URL解決できた場合は、viewからレスポンスを取得する
+                response = view(request)
             # pathがそれ以外の時は、静的ファイルからレスポンスを生成する
             else:
                 try:
