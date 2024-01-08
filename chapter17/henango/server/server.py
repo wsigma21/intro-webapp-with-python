@@ -1,7 +1,7 @@
 import socket
-from workerthread import WorkerThread
+from henango.server.worker import Worker
 
-class WebServer:
+class Server:
     """
     Webサーバを表すクラス
     """
@@ -23,7 +23,7 @@ class WebServer:
                 print(f"=== Server: クライアントとの接続が完了しました remote_address: {address} ===")
 
                 # クライアントを処理するスレッドを生成
-                thread = WorkerThread(client_socket, address)
+                thread = Worker(client_socket, address)
                 # スレッドの実行
                 thread.start()
 
