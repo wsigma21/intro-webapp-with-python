@@ -15,5 +15,5 @@ sec-ch-ua-platform: "macOS"
 Referer: http://localhost:8080/login
 Accept-Encoding: gzip, deflate, br
 Accept-Language: ja-JP,ja;q=0.9,en-US;q=0.8,en;q=0.7
-Cookie: username=taro
+Cookie: username=test; email=mail@mo
 

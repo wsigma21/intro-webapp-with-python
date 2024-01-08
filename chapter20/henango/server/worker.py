@@ -113,8 +113,17 @@ class Worker(Thread):
         for header_row in request_header.decode().split("\r\n"):
             key, value = re.split(r": *", header_row, maxsplit=1)
             headers[key] = value
+        
+        cookies = {}
+        if "Cookie" in headers:
+            # str から list へ変換 (ex) "name1=value1; name2=value2" => ["name1=value1", "name2=value2"]
+            cookie_strings = headers["Cookie"].split("; ")
+            # list から dict へ変換 (ex) ["name1=value1", "name2=value2"] => {"name1": "value1", "name2": "value2"}
+            for cookie_string in cookie_strings:
+                name, value = cookie_string.split("=", maxsplit=1)
+                cookies[name] = value
 
-        return HTTPRequest(method=method, path=path, http_version=http_version, headers=headers, body=request_body)
+        return HTTPRequest(method=method, path=path, http_version=http_version, headers=headers, cookies=cookies, body=request_body)
     
     def get_static_file_content(self, path: str) -> bytes:
         """
@@ -164,6 +173,9 @@ class Worker(Thread):
         response_header += f"Content-Length: {len(response.body)}\r\n"
         response_header += "Connection: Close\r\n"
         response_header += f"Content-Type: {response.content_type}\r\n"
+
+        for cookie_name, cookie_value in response.cookies.items():
+            response_header += f"Set-Cookie: {cookie_name}={cookie_value}\r\n"
 
         for header_name, header_value in response.headers.items():
             response_header += f"{header_name}: {header_value}\r\n"
