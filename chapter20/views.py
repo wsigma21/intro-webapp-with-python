@@ -4,6 +4,7 @@ from pprint import pformat
 
 from henango.http.request import HTTPRequest
 from henango.http.response import HTTPResponse
+from henango.http.cookie import Cookie
 from henango.template.renderer import render
 
 def now(request: HTTPRequest) -> HTTPResponse:
@@ -62,9 +63,13 @@ def login(request: HTTPRequest) -> HTTPResponse:
         username = post_params["username"][0]
         email = post_params["email"][0]
 
-        print("username=", username)
+        cookies = [
+            Cookie(name="username", value=username, max_age=30),
+            Cookie(name="email", value=email, max_age=30),
+        ]
+
         return HTTPResponse(
-            status_code=302, headers={"Location": "/welcome"}, cookies={"username": username, "email": email}
+            status_code=302, headers={"Location": "/welcome"}, cookies=cookies
         )
     
 def welcome(request: HTTPRequest) -> HTTPResponse:
